@@ -1,2 +1,2 @@
 # Proyecto3_BanckCredit
-Gestion de Creditos Bancarioas
+Gestion de Creditos Bancarios
