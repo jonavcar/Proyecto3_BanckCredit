@@ -10,24 +10,28 @@ package com.banck.banckcredit.utils;
  * @author jonavcar
  */
 public enum CustomerType {
+    //CLIENTE-PERSONAL
     PERSONAL("CP") {
         @Override
         public boolean equals(String customerType) {
             return value.equals(customerType);
         }
     },
+    //CLIENTE-PERSONAL-VIP
     PERSONAL_VIP("CPV") {
         @Override
         public boolean equals(String customerType) {
             return value.equals(customerType);
         }
     },
+    //CLIENTE-EMPRESARIAL
     BUSINESS("CE") {
         @Override
         public boolean equals(String customerType) {
             return value.equals(customerType);
         }
     },
+    //CLIENTE-EMPRESARIAL-PYME
     BUSINESS_PYME("CEP") {
         @Override
         public boolean equals(String customerType) {

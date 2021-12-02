@@ -1,45 +1,45 @@
 package com.banck.banckcredit.infraestructure.mockRepository;
 
-import com.banck.banckcredit.domain.Credit;
+import com.banck.banckcredit.domain.Product;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import com.banck.banckcredit.aplication.model.CreditRepository;
+import com.banck.banckcredit.aplication.model.ProductRepository;
 
 /**
  *
  * @author jonavcar
  */
 @Component
-public class MockCreditRepository implements CreditRepository {
+public class MockProductRepository implements ProductRepository {
 
     @Override
-    public Mono<Credit> get(String credito) {
-        Credit c = new Credit();
-        c.setCredit("34984545");
+    public Mono<Product> get(String credito) {
+        Product c = new Product();
+        c.setProduct("34984545");
         c.setCustomer("CTP");
         return Mono.just(c);
     }
 
     @Override
-    public Flux<Credit> list() {
-        List<Credit> lc = new ArrayList<>();
-        Credit c = new Credit();
-        c.setCredit("34984545");
+    public Flux<Product> list() {
+        List<Product> lc = new ArrayList<>();
+        Product c = new Product();
+        c.setProduct("34984545");
         c.setCustomer("CTP");
         lc.add(c);
         return Flux.fromIterable(lc);
     }
 
     @Override
-    public Mono<Credit> create(Credit c) {
+    public Mono<Product> create(Product c) {
         return Mono.just(c);
     }
 
     @Override
-    public Mono<Credit> update(String credito, Credit c) {
+    public Mono<Product> update(String credito, Product c) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -49,12 +49,12 @@ public class MockCreditRepository implements CreditRepository {
     }
 
     @Override
-    public Flux<Credit> listByCustomer(String customer) {
+    public Flux<Product> listByCustomer(String customer) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Flux<Credit> listByCustomerAndCreditType(String customer, String creditType) {
+    public Flux<Product> listByCustomerAndProductType(String customer, String productType) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

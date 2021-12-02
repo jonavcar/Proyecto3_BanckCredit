@@ -1,9 +1,11 @@
 package com.banck.banckcredit.spring.config;
 
-import com.banck.banckcredit.infraestructure.repository.CreditCrudRepository;
+import com.banck.banckcredit.infraestructure.repository.ProductCrudRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.banck.banckcredit.aplication.model.CreditRepository;
+import com.banck.banckcredit.aplication.model.ScheduleRepository;
+import com.banck.banckcredit.infraestructure.repository.ScheduleCrudRepository;
+import com.banck.banckcredit.aplication.model.ProductRepository;
 
 /**
  *
@@ -11,9 +13,14 @@ import com.banck.banckcredit.aplication.model.CreditRepository;
  */
 @Configuration
 public class SpringConfiguration {
-   
+
     @Bean
-    public CreditRepository creditRepository() {
-        return new CreditCrudRepository();
+    public ProductRepository productRepository() {
+        return new ProductCrudRepository();
+    }
+
+    @Bean
+    public ScheduleRepository scheduleRepository() {
+        return new ScheduleCrudRepository();
     }
 }

@@ -8,19 +8,30 @@ package com.banck.banckcredit.utils;
  *
  * @author jonavcar
  */
-public enum CreditType {
+public enum ProductType {
+    //CREDITO-PERSONAL
     PERSONAL_CREDIT("CP") {
         @Override
         public boolean equals(String customerType) {
             return value.equals(customerType);
         }
     },
+    //CREDITO-EMPRESARIAL
     BUSINESS_CREDIT("CE") {
         @Override
         public boolean equals(String customerType) {
             return value.equals(customerType);
         }
-    },CREDIT_CARD("TC") {
+    },
+    //TARGETA-CREDITO
+    CREDIT_CARD("TC") {
+        @Override
+        public boolean equals(String customerType) {
+            return value.equals(customerType);
+        }
+    },
+    //TARGETA-DEBITO
+    DEBIT_CARD("TD") {
         @Override
         public boolean equals(String customerType) {
             return value.equals(customerType);
@@ -33,7 +44,7 @@ public enum CreditType {
         return value.equals(customerType);
     }
 
-    private CreditType(String value) {
+    private ProductType(String value) {
         this.value = value;
     }
 }

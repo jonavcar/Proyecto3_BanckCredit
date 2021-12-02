@@ -9,15 +9,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @author jonavcar
  */
 @Data
-@Document("credit")
-public class CreditDao {
+@Document("product")
+public class ProductDao {
 
     @Id
-    public String credit;
-    public String creditType;
+    public String product;
+    public String productType;
     public String customer;
     public String customerType;
-    public String dateCreated;
-    public int limitAmount;
-    public boolean active;
+    public String date;
+    public boolean status;
 }

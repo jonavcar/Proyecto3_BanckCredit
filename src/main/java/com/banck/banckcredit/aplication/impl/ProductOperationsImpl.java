@@ -1,15 +1,15 @@
 package com.banck.banckcredit.aplication.impl;
 
-import com.banck.banckcredit.domain.Credit;
+import com.banck.banckcredit.domain.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.banck.banckcredit.aplication.CreditOperations;
-import com.banck.banckcredit.aplication.model.CreditRepository;
-import com.banck.banckcredit.utils.CreditType;
+import com.banck.banckcredit.utils.ProductType;
+import com.banck.banckcredit.aplication.model.ProductRepository;
+import com.banck.banckcredit.aplication.ProductOperations;
 
 /**
  *
@@ -17,28 +17,28 @@ import com.banck.banckcredit.utils.CreditType;
  */
 @Service
 @RequiredArgsConstructor
-public class CreditOperationsImpl implements CreditOperations {
+public class ProductOperationsImpl implements ProductOperations {
 
-    Logger logger = LoggerFactory.getLogger(CreditOperationsImpl.class);
-    private final CreditRepository creditRepository;
+    Logger logger = LoggerFactory.getLogger(ProductOperationsImpl.class);
+    private final ProductRepository creditRepository;
 
     @Override
-    public Flux<Credit> list() {
+    public Flux<Product> list() {
         return creditRepository.list();
     }
 
     @Override
-    public Mono<Credit> get(String credito) {
+    public Mono<Product> get(String credito) {
         return creditRepository.get(credito);
     }
 
     @Override
-    public Mono<Credit> create(Credit credit) {
+    public Mono<Product> create(Product credit) {
         return creditRepository.create(credit);
     }
 
     @Override
-    public Mono<Credit> update(String credito, Credit c
+    public Mono<Product> update(String credito, Product c
     ) {
         return creditRepository.update(credito, c);
     }
@@ -49,13 +49,13 @@ public class CreditOperationsImpl implements CreditOperations {
     }
 
     @Override
-    public Flux<Credit> listByCustomer(String customer) {
+    public Flux<Product> listByCustomer(String customer) {
         return creditRepository.listByCustomer(customer);
     }
 
     @Override
     public Mono<Integer> countCardByCustomer(String customer) {
-        return creditRepository.listByCustomerAndCreditType(customer, CreditType.CREDIT_CARD.value).count().flatMap(r -> {
+        return creditRepository.listByCustomerAndCreditType(customer, ProductType.CREDIT_CARD.value).count().flatMap(r -> {
             return Mono.just(r.intValue());
         });
     }
