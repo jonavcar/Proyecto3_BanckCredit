@@ -25,6 +25,9 @@ import com.banck.banckcredit.utils.SunatUtils;
 import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 import com.banck.banckcredit.aplication.ProductOperations;
+import com.banck.banckcredit.aplication.ScheduleOperations;
+import com.banck.banckcredit.domain.Schedule;
+import org.springframework.http.HttpStatus;
 
 /**
  *
@@ -39,6 +42,7 @@ public class ProductController {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
     LocalDateTime dateTime = LocalDateTime.now(ZoneId.of("America/Bogota"));
     private final ProductOperations operations;
+    private final ScheduleOperations scheduleOperations;
 
     @GetMapping
     public Flux<Product> listAll() {
@@ -57,114 +61,121 @@ public class ProductController {
 
     @PostMapping
     public Mono<ResponseEntity> create(@RequestBody Product c) {
-
+        c.setStatus(true);
         c.setDate(dateTime.format(formatter));
-
         return Mono.just(c).flatMap(m -> {
-            String msgTipoProducto
-                    = "Credito Personal = { \"productType\": \"CP\" }\n"
-                    + "Credito Empresarial = { \"productType\": \"CE\" }\n"
-                    + "Targeta Debito = { \"productType\": \"TD\" }\n"
-                    + "Targeta Credito = { \"productType\": \"TC\" }";
-            String msgTipoCliente
-                    = "Cliente Personal = { \"customerType\": \"CP\" }\n"
-                    + "Cliente Personal VIP = { \"customerType\": \"CPV\" }\n"
-                    + "Cliente Empresarial = { \"customerType\": \"CE\" }\n"
-                    + "Cliente Empresarial PYME = { \"customerType\": \"CEP\" }";
-
-            if (Optional.ofNullable(m.getProductType()).isEmpty()) {
-                return Mono.just(ResponseEntity.ok(""
-                        + "Debe ingresar Tipo Producto, Ejemplos: \n"
-                        + msgTipoProducto));
-            }
 
             if (Optional.ofNullable(m.getCustomer()).isEmpty()) {
                 return Mono.just(ResponseEntity.ok("Debe ingresar el cliente, Ejemplo { \"customer\": \"78345212\" }"));
             }
 
-            if (Optional.ofNullable(m.getCustomerType()).isEmpty()) {
-                return Mono.just(ResponseEntity.ok(""
-                        + "Debe ingresar Tipo Cliente, Ejemplos: \n"
-                        + msgTipoCliente));
-            }
+            return scheduleOperations.isupToDate(m.getCustomer()).flatMap(isup -> {
+                if (isup) {
+                    String msgTipoProducto
+                            = "Credito Personal = { \"productType\": \"CP\" }\n"
+                            + "Credito Empresarial = { \"productType\": \"CE\" }\n"
+                            + "Targeta Debito = { \"productType\": \"TD\" }\n"
+                            + "Targeta Credito = { \"productType\": \"TC\" }";
+                    String msgTipoCliente
+                            = "Cliente Personal = { \"customerType\": \"CP\" }\n"
+                            + "Cliente Personal VIP = { \"customerType\": \"CPV\" }\n"
+                            + "Cliente Empresarial = { \"customerType\": \"CE\" }\n"
+                            + "Cliente Empresarial PYME = { \"customerType\": \"CEP\" }";
+
+                    if (Optional.ofNullable(m.getProductType()).isEmpty()) {
+                        return Mono.just(ResponseEntity.ok(""
+                                + "Debe ingresar Tipo Producto, Ejemplos: \n"
+                                + msgTipoProducto));
+                    }
+
+                    if (Optional.ofNullable(m.getCustomerType()).isEmpty()) {
+                        return Mono.just(ResponseEntity.ok(""
+                                + "Debe ingresar Tipo Cliente, Ejemplos: \n"
+                                + msgTipoCliente));
+                    }
 
 
-            /*
+                    /*
                 Se realiza validacion basica de datos para poder registrar
                 un credito bancario
-             */
-            boolean isCreditType = false;
-            for (ProductType tc : ProductType.values()) {
-                if (m.getProductType().equals(tc.value)) {
-                    isCreditType = true;
-                }
-            }
-
-            boolean isCustomerType = false;
-            for (CustomerType tc : CustomerType.values()) {
-                if (m.getCustomerType().equals(tc.value)) {
-                    isCustomerType = true;
-                }
-            }
-            if (!isCreditType || Optional.ofNullable(m.getProductType()).isEmpty()) {
-                return Mono.just(ResponseEntity.ok(""
-                        + "Solo existen estos Codigos de Productos: \n"
-                        + msgTipoProducto));
-            }
-            if (!isCustomerType || Optional.ofNullable(m.getCustomerType()).isEmpty()) {
-                return Mono.just(ResponseEntity.ok(""
-                        + "Solo existen estos Codigos de Tipos de Clientes: \n"
-                        + msgTipoCliente));
-            }
-
-            c.setProduct(c.getProductType() + "-" + c.getCustomer() + "-" + getRandomNumberString());
-
-            if (CustomerType.PERSONAL.equals(m.getCustomerType())
-                    || CustomerType.PERSONAL_VIP.equals(m.getCustomerType())) {
-
-                if (SunatUtils.isRUCValid(m.getCustomer())) {
-                    return Mono.just(ResponseEntity.ok("El RUC " + m.getCustomer() + " es solo para empresas, debe registrarse con DNI."));
-                }
-
-            } else {
-                if (!SunatUtils.isRUCValid(m.getCustomer())) {
-                    return Mono.just(ResponseEntity.ok("El RUC " + m.getCustomer() + " de la Empresa No es Válido!!"));
-                }
-            }
-
-            /*
-                Se define la logica de los creditos al registra un credito segun
-                el tipo de credito que se esta creando
-             */
-            if (CustomerType.PERSONAL.equals(m.getCustomerType()) || CustomerType.PERSONAL_VIP.equals(m.getCustomerType())) {
-
-                return operations.listByCustomer(m.getCustomer()).filter(p -> p.getProductType().equals(m.getProductType())).count().flatMap(fm -> {
-                    if (ProductType.CREDIT_CARD.equals(m.getProductType())) {
-                        return operations.create(c).flatMap(rp -> {
-                            return Mono.just(ResponseEntity.ok(rp));
-                        });
-                    } else if (ProductType.BUSINESS_CREDIT.equals(m.getProductType())) {
-                        return Mono.just(ResponseEntity.ok("Usted no puede tener credito empresarial"));
-                    } else {
-                        if (fm.intValue() == 0) {
-                            return operations.create(c).flatMap(rp -> {
-                                return Mono.just(ResponseEntity.ok(rp));
-                            });
-                        } else {
-                            return Mono.just(ResponseEntity.ok("Usted solo puede tener un credito personal"));
+                     */
+                    boolean isCreditType = false;
+                    for (ProductType tc : ProductType.values()) {
+                        if (m.getProductType().equals(tc.value)) {
+                            isCreditType = true;
                         }
                     }
 
-                });
-            } else {
-                if (ProductType.PERSONAL_CREDIT.equals(m.getProductType())) {
-                    return Mono.just(ResponseEntity.ok("Usted no puede tener credito personal!!"));
+                    boolean isCustomerType = false;
+                    for (CustomerType tc : CustomerType.values()) {
+                        if (m.getCustomerType().equals(tc.value)) {
+                            isCustomerType = true;
+                        }
+                    }
+                    if (!isCreditType || Optional.ofNullable(m.getProductType()).isEmpty()) {
+                        return Mono.just(ResponseEntity.ok(""
+                                + "Solo existen estos Codigos de Productos: \n"
+                                + msgTipoProducto));
+                    }
+                    if (!isCustomerType || Optional.ofNullable(m.getCustomerType()).isEmpty()) {
+                        return Mono.just(ResponseEntity.ok(""
+                                + "Solo existen estos Codigos de Tipos de Clientes: \n"
+                                + msgTipoCliente));
+                    }
+
+                    c.setProduct(c.getProductType() + "-" + c.getCustomer() + "-" + getRandomNumberString());
+
+                    if (CustomerType.PERSONAL.equals(m.getCustomerType())
+                            || CustomerType.PERSONAL_VIP.equals(m.getCustomerType())) {
+
+                        if (SunatUtils.isRUCValid(m.getCustomer())) {
+                            return Mono.just(ResponseEntity.ok("El RUC " + m.getCustomer() + " es solo para empresas, debe registrarse con DNI."));
+                        }
+
+                    } else {
+                        if (!SunatUtils.isRUCValid(m.getCustomer())) {
+                            return Mono.just(ResponseEntity.ok("El RUC " + m.getCustomer() + " de la Empresa No es Válido!!"));
+                        }
+                    }
+
+                    /*
+                Se define la logica de los creditos al registra un credito segun
+                el tipo de credito que se esta creando
+                     */
+                    if (CustomerType.PERSONAL.equals(m.getCustomerType()) || CustomerType.PERSONAL_VIP.equals(m.getCustomerType())) {
+
+                        return operations.listByCustomer(m.getCustomer()).filter(p -> p.getProductType().equals(m.getProductType())).count().flatMap(fm -> {
+                            if (ProductType.CREDIT_CARD.equals(m.getProductType())) {
+                                return operations.create(c).flatMap(rp -> {
+                                    return Mono.just(ResponseEntity.ok(rp));
+                                });
+                            } else if (ProductType.BUSINESS_CREDIT.equals(m.getProductType())) {
+                                return Mono.just(ResponseEntity.ok("Usted no puede tener credito empresarial"));
+                            } else {
+                                if (fm.intValue() == 0) {
+                                    return operations.create(c).flatMap(rp -> {
+                                        return Mono.just(ResponseEntity.ok(rp));
+                                    });
+                                } else {
+                                    return Mono.just(ResponseEntity.ok("Usted solo puede tener un credito personal"));
+                                }
+                            }
+
+                        });
+                    } else {
+                        if (ProductType.PERSONAL_CREDIT.equals(m.getProductType())) {
+                            return Mono.just(ResponseEntity.ok("Usted no puede tener credito personal!!"));
+                        } else {
+                            return operations.create(c).flatMap(rp -> {
+                                return Mono.just(ResponseEntity.ok(rp));
+                            });
+                        }
+                    }
+
                 } else {
-                    return operations.create(c).flatMap(rp -> {
-                        return Mono.just(ResponseEntity.ok(rp));
-                    });
+                    return Mono.just(new ResponseEntity("La persona " + m.getCustomer() + " Tiene deudas vencidas por lo que no puede realizar estas operaciones", HttpStatus.BAD_REQUEST));
                 }
-            }
+            });
         });
     }
 

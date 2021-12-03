@@ -12,5 +12,5 @@ public interface IProductCrudRepository extends ReactiveCrudRepository<ProductDa
 
     Flux<ProductDao> findAllByCustomer(String customer);
 
-    Flux<ProductDao> findAllByCustomerAndCreditType(String customer, String creditType);
+    Flux<ProductDao> findAllByCustomerAndProduct(String customer, String product);
 }

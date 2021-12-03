@@ -90,4 +90,9 @@ public class ScheduleCrudRepository implements ScheduleRepository {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public Flux<Schedule> listByCustomerAndStatus(String customer, String status) {
+       return scheduleRepository.findAllByCustomerAndStatus(customer, status).map(this::ScheduleDaoToSchedule);
+    }
+
 }

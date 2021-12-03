@@ -20,42 +20,42 @@ import com.banck.banckcredit.aplication.ProductOperations;
 public class ProductOperationsImpl implements ProductOperations {
 
     Logger logger = LoggerFactory.getLogger(ProductOperationsImpl.class);
-    private final ProductRepository creditRepository;
+    private final ProductRepository productRepository;
 
     @Override
     public Flux<Product> list() {
-        return creditRepository.list();
+        return productRepository.list();
     }
 
     @Override
     public Mono<Product> get(String credito) {
-        return creditRepository.get(credito);
+        return productRepository.get(credito);
     }
 
     @Override
     public Mono<Product> create(Product credit) {
-        return creditRepository.create(credit);
+        return productRepository.create(credit);
     }
 
     @Override
     public Mono<Product> update(String credito, Product c
     ) {
-        return creditRepository.update(credito, c);
+        return productRepository.update(credito, c);
     }
 
     @Override
     public void delete(String credito) {
-        creditRepository.delete(credito);
+        productRepository.delete(credito);
     }
 
     @Override
     public Flux<Product> listByCustomer(String customer) {
-        return creditRepository.listByCustomer(customer);
+        return productRepository.listByCustomer(customer);
     }
 
     @Override
     public Mono<Integer> countCardByCustomer(String customer) {
-        return creditRepository.listByCustomerAndCreditType(customer, ProductType.CREDIT_CARD.value).count().flatMap(r -> {
+        return productRepository.listByCustomerAndProductType(customer, ProductType.CREDIT_CARD.value).count().flatMap(r -> {
             return Mono.just(r.intValue());
         });
     }

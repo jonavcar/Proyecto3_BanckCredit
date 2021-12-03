@@ -19,4 +19,6 @@ public interface IScheduleCrudRepository extends ReactiveCrudRepository<Schedule
     Flux<ScheduleDao> findAllByProduct(String customer);
 
     Flux<ScheduleDao> findAllByCustomerAndProduct(String customer, String product);
+    
+    Flux<ScheduleDao> findAllByCustomerAndStatus(String customer, String status);
 }

@@ -17,6 +17,8 @@ public interface ScheduleOperations {
     public Flux<Schedule> list();
 
     public Flux<Schedule> listByCustomer(String customer);
+    
+    public Mono<Boolean> isupToDate(String customer);
 
     public Mono<Schedule> get(String id);
 

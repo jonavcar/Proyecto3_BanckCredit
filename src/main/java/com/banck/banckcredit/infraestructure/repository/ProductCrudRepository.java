@@ -16,37 +16,37 @@ import com.banck.banckcredit.aplication.model.ProductRepository;
 public class ProductCrudRepository implements ProductRepository {
 
     @Autowired
-    IProductCrudRepository productRepository;
+    IProductCrudRepository iproductRepository;
 
     @Override
     public Mono<Product> get(String id) {
-        return productRepository.findById(id).map(this::ProductDaoToProduct);
+        return iproductRepository.findById(id).map(this::ProductDaoToProduct);
     }
 
     @Override
     public Flux<Product> list() {
-        return productRepository.findAll().map(this::ProductDaoToProduct);
+        return iproductRepository.findAll().map(this::ProductDaoToProduct);
     }
 
     @Override
     public Mono<Product> create(Product c) {
-        return productRepository.save(ProductToProductDao(c)).map(this::ProductDaoToProduct);
+        return iproductRepository.save(ProductToProductDao(c)).map(this::ProductDaoToProduct);
     }
 
     @Override
     public Mono<Product> update(String id, Product credit) {
         credit.setProduct(id);
-        return productRepository.save(ProductToProductDao(credit)).map(this::ProductDaoToProduct);
+        return iproductRepository.save(ProductToProductDao(credit)).map(this::ProductDaoToProduct);
     }
 
     @Override
     public void delete(String id) {
-        productRepository.deleteById(id).subscribe();
+        iproductRepository.deleteById(id).subscribe();
     }
 
     @Override
     public Flux<Product> listByCustomer(String customer) {
-        return productRepository.findAllByCustomer(customer).map(this::ProductDaoToProduct);
+        return iproductRepository.findAllByCustomer(customer).map(this::ProductDaoToProduct);
     }
 
     public ProductDao ProductToProductDao(Product p) {
@@ -72,7 +72,7 @@ public class ProductCrudRepository implements ProductRepository {
     }
 
     @Override
-    public Flux<Product> listByCustomerAndCreditType(String customer, String creditType) {
+    public Flux<Product> listByCustomerAndProductType(String customer, String productType) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

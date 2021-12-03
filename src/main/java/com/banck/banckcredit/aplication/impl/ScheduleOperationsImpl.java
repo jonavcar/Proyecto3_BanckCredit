@@ -7,6 +7,7 @@ package com.banck.banckcredit.aplication.impl;
 import com.banck.banckcredit.aplication.ScheduleOperations;
 import com.banck.banckcredit.aplication.model.ScheduleRepository;
 import com.banck.banckcredit.domain.Schedule;
+import com.banck.banckcredit.utils.Status;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,18 @@ public class ScheduleOperationsImpl implements ScheduleOperations {
     @Override
     public void delete(String id) {
         scheduleRepository.delete(id);
+    }
+
+    @Override
+    public Mono<Boolean> isupToDate(String customer) {
+        return scheduleRepository.listByCustomerAndStatus(customer, Status.DEFEATED.value).count().flatMap(count -> {
+            if (count == 0) {
+                return Mono.just(true);
+            } else {
+                return Mono.just(false);
+            }
+
+        });
     }
 
 }

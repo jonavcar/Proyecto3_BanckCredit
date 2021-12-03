@@ -18,6 +18,8 @@ public interface ScheduleRepository {
 
     public Flux<Schedule> listByCustomer(String customer);
 
+    public Flux<Schedule> listByCustomerAndStatus(String customer, String status);
+
     public Flux<Schedule> listByProduct(String product);
 
     public Mono<Schedule> get(String id);
