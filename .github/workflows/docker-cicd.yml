@@ -1,4 +1,4 @@
-name: Build Image credits banck
+name: Build Image Banck Credit
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main ]
 env:
-  DOCKER_IMAGE_NAME: 'creditbanck'
+  DOCKER_IMAGE_NAME: 'banckcredit'
 
 jobs:
 

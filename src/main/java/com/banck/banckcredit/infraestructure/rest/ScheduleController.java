@@ -34,7 +34,7 @@ import org.springframework.http.HttpStatus;
  * @author jonavcar
  */
 @RestController
-@RequestMapping("/credit/schedule")
+@RequestMapping("/banck-credit/schedule")
 @RequiredArgsConstructor
 public class ScheduleController {
 

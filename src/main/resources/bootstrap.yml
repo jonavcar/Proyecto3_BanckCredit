@@ -7,4 +7,4 @@ spring:
   cloud:
     config:
       enable: true
-      uri: http://20.97.83.156:9997
+      uri: http://config-server.southcentralus.azurecontainer.io:9998

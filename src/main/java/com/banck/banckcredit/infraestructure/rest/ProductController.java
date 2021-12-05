@@ -26,7 +26,6 @@ import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 import com.banck.banckcredit.aplication.ProductOperations;
 import com.banck.banckcredit.aplication.ScheduleOperations;
-import com.banck.banckcredit.domain.Schedule;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -34,7 +33,7 @@ import org.springframework.http.HttpStatus;
  * @author jonavcar
  */
 @RestController
-@RequestMapping("/credit")
+@RequestMapping("/banck-credit")
 @RequiredArgsConstructor
 public class ProductController {
 
