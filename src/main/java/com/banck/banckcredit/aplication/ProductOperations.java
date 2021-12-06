@@ -1,6 +1,7 @@
 package com.banck.banckcredit.aplication;
 
 import com.banck.banckcredit.domain.Product;
+import com.banck.banckcredit.domain.ProductSummaryDto;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -11,17 +12,19 @@ import reactor.core.publisher.Mono;
 public interface ProductOperations {
 
     public Flux<Product> list();
-    
+
     public Flux<Product> listByCustomer(String customer);
 
     public Mono<Product> get(String id);
-    
+
     public Mono<Product> create(Product credit);
 
     public Mono<Product> update(String id, Product credit);
 
     public void delete(String id);
-    
+
     public Mono<Integer> countCardByCustomer(String customer);
+
+    public Flux<ProductSummaryDto> listProductSummaryByCustomer(String customer);
 
 }

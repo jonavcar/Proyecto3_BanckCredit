@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.banck.banckcredit.utils.ProductType;
 import com.banck.banckcredit.aplication.model.ProductRepository;
 import com.banck.banckcredit.aplication.ProductOperations;
+import com.banck.banckcredit.domain.ProductSummaryDto;
 
 /**
  *
@@ -58,6 +59,18 @@ public class ProductOperationsImpl implements ProductOperations {
         return productRepository.listByCustomerAndProductType(customer, ProductType.CREDIT_CARD.value).count().flatMap(r -> {
             return Mono.just(r.intValue());
         });
+    }
+
+    @Override
+    public Flux<ProductSummaryDto> listProductSummaryByCustomer(String customer) {
+        return productRepository.listByCustomer(customer)
+                .map(f -> {
+                    ProductSummaryDto ps = new ProductSummaryDto();
+                    ps.setCustomer(f.getCustomer());
+                    ps.setProduct(f.getProduct());
+                    ps.setDescription(f.getProductType());
+                    return ps;
+                });
     }
 
 }
